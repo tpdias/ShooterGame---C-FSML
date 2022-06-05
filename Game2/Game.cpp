@@ -6,6 +6,7 @@ void Game::initVariables()
 	this->spawnTimerMax = 10.f;
 	this->spawnTimer = this->spawnTimerMax;
 	this->maxSwagBalls = 10;
+	this->maxEnemies = 10;
 	this->points = 0;
 }
 
@@ -77,6 +78,21 @@ void Game::pollEvents()
 			if (this->sfmlEvent.key.code == sf::Keyboard::Escape)
 				this->window->close();
 			break;
+		}
+	}
+}
+
+void Game::spawnEnemies()
+{
+	//Timer
+	if (this->spawnTimerEnemies < this->spawnTimerMaxEnemies)
+		this->spawnTimerEnemies += 1.f;
+	else
+	{
+		if (this->enemies.size() < this->maxEnemies)
+		{
+			this->enemies.push_back(Enemies(*this->window, EnemiesType::Melee));
+			this->spawnTimerEnemies = 0.f;
 		}
 	}
 }
@@ -161,7 +177,9 @@ void Game::update()
 
 	if (this->endGame == false)
 	{
+		
 		this->spawnSwagBalls();
+		this->spawnEnemies();
 		this->updatePlayer();
 		this->updateCollision();
 		this->updateGui();
@@ -181,6 +199,10 @@ void Game::render()
 	this->player.render(this->window);
 
 	for (auto i : this->swagBalls)
+	{
+		i.render(*this->window);
+	}
+	for (auto i : this->enemies)
 	{
 		i.render(*this->window);
 	}
