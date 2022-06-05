@@ -11,11 +11,12 @@ class SwagBall
 private:
 	sf::CircleShape shape;
 
-	void initShape();
+	void initShape(const sf::RenderWindow& window);
 public:
-	SwagBall();
+	SwagBall(const sf::RenderWindow& window);
 	virtual ~SwagBall();
 
+	const sf::CircleShape getShape() const;
 	//Functions
 	void update();
 	void render(sf::RenderTarget& target);

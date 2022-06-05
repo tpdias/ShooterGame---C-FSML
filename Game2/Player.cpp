@@ -2,7 +2,10 @@
 
 void Player::initVariables()
 {
-	this->movmentSpeed = 10.f;
+	this->movmentSpeed = 5.f;
+	this->hpMax = 10;
+	this->hp = hpMax;
+	this->points = 0;
 }
 
 void Player::initShape()
@@ -22,6 +25,11 @@ Player::Player(float x, float y)
 Player::~Player()
 {
 
+}
+
+const sf::RectangleShape& Player::getShape() const
+{
+	return this->shape;
 }
 
 void Player::updateInput()
@@ -51,20 +59,18 @@ void Player::updateInput()
 
 void Player::updateWindowBoundsCollision(const sf::RenderTarget* target)
 {
-	//Position of the player
-	sf::FloatRect playerBounds = this->shape.getGlobalBounds();
 	//Left
-	if (playerBounds.left <= 0.f)
-		this->shape.setPosition(0.f, playerBounds.top);
+	if (this->shape.getGlobalBounds().left <= 0.f)
+		this->shape.setPosition(0.f, this->shape.getGlobalBounds().top);
 	//Right	
-	else if (playerBounds.left + playerBounds.width >= target->getSize().x)
-		this->shape.setPosition(target->getSize().x - playerBounds.width, playerBounds.top);
+	else if (this->shape.getGlobalBounds().left + this->shape.getGlobalBounds().width >= target->getSize().x)
+		this->shape.setPosition(target->getSize().x - this->shape.getGlobalBounds().width, this->shape.getGlobalBounds().top);
 	//Top
-	if (playerBounds.top <= 0.f)
-		this->shape.setPosition(playerBounds.left, 0.f);
+	if (this->shape.getGlobalBounds().top <= 0.f)
+		this->shape.setPosition(this->shape.getGlobalBounds().left, 0.f);
 	//Bottom	
-	else if (playerBounds.top + playerBounds.height >= target->getSize().y)
-		this->shape.setPosition(playerBounds.left, target->getSize().y - playerBounds.height);
+	else if (this->shape.getGlobalBounds().top + this->shape.getGlobalBounds().height >= target->getSize().y)
+		this->shape.setPosition(this->shape.getGlobalBounds().left, target->getSize().y - this->shape.getGlobalBounds().height);
 }
 
 void Player::update(const sf::RenderTarget* target)
