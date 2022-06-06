@@ -11,7 +11,11 @@ void Player::initVariables()
 void Player::initShape()
 {
 	this->shape.setFillColor(sf::Color::Cyan);
-	this->shape.setSize(sf::Vector2f(50.f, 50.f));
+	this->shape.setSize(sf::Vector2f(25.f, 25.f));
+	this->shape.setPosition(
+		400.f - this->shape.getGlobalBounds().width,
+		300.f - this->shape.getGlobalBounds().height
+	);
 }
 
 Player::Player(float x, float y)

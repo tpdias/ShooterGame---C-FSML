@@ -3,10 +3,17 @@
 void Game::initVariables()
 {
 	this->endGame = false;
+
+	//Swag balls
 	this->spawnTimerMax = 10.f;
 	this->spawnTimer = this->spawnTimerMax;
 	this->maxSwagBalls = 10;
-	this->maxEnemies = 10;
+
+	//Melee enemies
+	this->spawnTimerMaxME = 50.f;
+	this->spawnTimerME = this->spawnTimerMaxME;
+	this->maxME = 10;
+
 	this->points = 0;
 }
 
@@ -85,14 +92,14 @@ void Game::pollEvents()
 void Game::spawnEnemies()
 {
 	//Timer
-	if (this->spawnTimerEnemies < this->spawnTimerMaxEnemies)
-		this->spawnTimerEnemies += 1.f;
+	if (this->spawnTimerME < this->spawnTimerMaxME)
+		this->spawnTimerME += 1.f;
 	else
 	{
-		if (this->enemies.size() < this->maxEnemies)
+		if (this->meleeEnemies.size() < this->maxME)
 		{
-			this->enemies.push_back(Enemies(*this->window, EnemiesType::Melee));
-			this->spawnTimerEnemies = 0.f;
+			this->meleeEnemies.push_back(MeleeEnemies(*this->window, this->player.getShape()));
+			this->spawnTimerME = 0.f;
 		}
 	}
 }
@@ -202,7 +209,7 @@ void Game::render()
 	{
 		i.render(*this->window);
 	}
-	for (auto i : this->enemies)
+	for (auto i : this->meleeEnemies)
 	{
 		i.render(*this->window);
 	}

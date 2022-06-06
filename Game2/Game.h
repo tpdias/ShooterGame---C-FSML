@@ -7,7 +7,7 @@
 
 #include "Player.h"
 #include "SwagBall.h"
-#include "Enemies.h"
+#include "MeleeEnemies.h"
 
 class Game
 {
@@ -28,13 +28,17 @@ private:
 	std::vector<SwagBall> swagBalls;
 	float spawnTimerMax;
 	float spawnTimer;
-	float spawnTimerMaxEnemies;
-	float spawnTimerEnemies;
 	int maxSwagBalls;
-	//enemies
-	std::vector<Enemies> enemies;
-	float maxEnemies;
+	
+	//Melee Enemies
+	float spawnTimerMaxME;
+	float spawnTimerME;	
+	std::vector<MeleeEnemies> meleeEnemies;
+	float maxME;
 
+	//Ranged Enemies
+
+	//Summoner Enemies
 	void initVariables();
 	void initWindow();
 	void initFonts();

@@ -8,27 +8,29 @@
 
 #include <iostream>
 
-enum EnemiesType { Melee, Ranged };
 
-class Enemies
+
+class MeleeEnemies
 {
 private:
 	sf::CircleShape shape;
 	int type;
 	int stage;
 	int hp;
+	float movSpeed;
 
-	void initEnemy(const sf::RenderWindow& window);
+	void initMeleeEnemy(const sf::RenderWindow& window, sf::RectangleShape player);
 
 public:
 	//Constructors
-	Enemies(const sf::RenderWindow& window, int type);
-	virtual ~Enemies();
+	MeleeEnemies(const sf::RenderWindow& window, sf::RectangleShape player);
+	virtual ~MeleeEnemies();
 	//Accessors
 	const sf::CircleShape getShape() const;
 	const int& getType() const;
 
 	//Functions
+	sf::Vector2f randomPosition(const sf::RenderWindow& window, sf::RectangleShape player);
 	void update();
 	void render(sf::RenderTarget& target);
 };
