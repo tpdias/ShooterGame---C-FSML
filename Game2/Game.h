@@ -25,10 +25,10 @@ private:
 	sf::Text guiText;
 	sf::Text endGameText;
 	
-	std::vector<SwagBall> swagBalls;
-	float spawnTimerMax;
-	float spawnTimer;
-	int maxSwagBalls;
+	//std::vector<SwagBall> swagBalls;
+	//float spawnTimerMax;
+	//float spawnTimer;
+	//int maxSwagBalls;
 	
 	//Melee Enemies
 	float spawnTimerMaxME;
@@ -60,7 +60,7 @@ public:
 	void pollEvents();
 	
 	void spawnEnemies();
-	void spawnSwagBalls();
+	//void spawnSwagBalls();
 	const int randBallType() const;
 	void updatePlayer();
 	void updateCollision();

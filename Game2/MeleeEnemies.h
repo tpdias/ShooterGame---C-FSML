@@ -1,23 +1,17 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
-#include <SFML/System.hpp>
-#include <SFML/Window.hpp>
-#include <SFML/Network.hpp>
-
+#include "Enemy.h"
+#include <math.h>
 #include <iostream>
 
-
-
-class MeleeEnemies
+class MeleeEnemies : public Enemy
 {
 private:
 	sf::CircleShape shape;
-	int type;
 	int stage;
 	int hp;
 	float movSpeed;
+	bool spawned;
 
 	void initMeleeEnemy(const sf::RenderWindow& window, sf::RectangleShape player);
 
@@ -26,12 +20,15 @@ public:
 	MeleeEnemies(const sf::RenderWindow& window, sf::RectangleShape player);
 	virtual ~MeleeEnemies();
 	//Accessors
+	bool isAlive();
 	const sf::CircleShape getShape() const;
-	const int& getType() const;
 
 	//Functions
+	void explode();
+	void collisionMove(sf::CircleShape secondEnemy);
 	sf::Vector2f randomPosition(const sf::RenderWindow& window, sf::RectangleShape player);
-	void update();
+	sf::Vector2f enemyDirection(sf::RectangleShape player);
+	void update(sf::RectangleShape player);
 	void render(sf::RenderTarget& target);
 };
 

@@ -5,10 +5,11 @@ void Game::initVariables()
 	this->endGame = false;
 
 	//Swag balls
+	/*
 	this->spawnTimerMax = 10.f;
 	this->spawnTimer = this->spawnTimerMax;
 	this->maxSwagBalls = 10;
-
+	*/
 	//Melee enemies
 	this->spawnTimerMaxME = 50.f;
 	this->spawnTimerME = this->spawnTimerMaxME;
@@ -103,7 +104,7 @@ void Game::spawnEnemies()
 		}
 	}
 }
-
+/*
 void Game::spawnSwagBalls()
 {
 	//Timer
@@ -118,7 +119,7 @@ void Game::spawnSwagBalls()
 		}
 	}
 }
-
+*/
 const int Game::randBallType() const
 {
 	int type = SwagBallTypes::DEFAULT;
@@ -142,30 +143,27 @@ void Game::updatePlayer()
 
 void Game::updateCollision()
 {
-	//Check the collision
-	for (size_t i = 0; i < this->swagBalls.size(); i ++)
+	//Check the collision with the player
+	for (size_t i = 0; i < this->meleeEnemies.size(); i ++)
 	{
-		if (this->player.getShape().getGlobalBounds().intersects(this->swagBalls[i].getShape().getGlobalBounds()))
+		if (this->player.getShape().getGlobalBounds().intersects(this->meleeEnemies[i].getShape().getGlobalBounds()))
 		{
-			switch (this->swagBalls[i].getType())
-			{
-			case SwagBallTypes::DEFAULT:
-				break;
-			case SwagBallTypes::DAMAGING:
-				this->player.takeDamage(1);
-				break;
-			case SwagBallTypes::HEALING:
-				this->player.gainHealth(1);
-				break;
-			}
-			//Add points
-			this->points++;
-
+			this->player.takeDamage(1);
+	
 			//Remove the ball
-			this->swagBalls.erase(this->swagBalls.begin() + i);
+			this->meleeEnemies[i].explode();
+			this->meleeEnemies.erase(this->meleeEnemies.begin() + i);
+		}
+		//Check the collision with the Enemies
+		for (int j = 0; j < this->meleeEnemies.size(); j++)
+		{
+			if ((this->meleeEnemies[i].getShape().getGlobalBounds().intersects(this->meleeEnemies[j].getShape().getGlobalBounds())) && (i != j))
+			{
+				this->meleeEnemies[i].collisionMove(this->meleeEnemies[j].getShape());
+			}
 		}
 	}
-
+	
 }
 
 void Game::updateGui()
@@ -185,8 +183,13 @@ void Game::update()
 	if (this->endGame == false)
 	{
 		
-		this->spawnSwagBalls();
+		//this->spawnSwagBalls();
 		this->spawnEnemies();
+		for (size_t i = 0; i < this->meleeEnemies.size(); i++)
+		{
+			if(meleeEnemies[i].isAlive())
+				meleeEnemies[i].update(player.getShape());
+		}
 		this->updatePlayer();
 		this->updateCollision();
 		this->updateGui();
@@ -204,11 +207,11 @@ void Game::render()
 
 	//Render
 	this->player.render(this->window);
-
+	/*
 	for (auto i : this->swagBalls)
 	{
 		i.render(*this->window);
-	}
+	}*/
 	for (auto i : this->meleeEnemies)
 	{
 		i.render(*this->window);
