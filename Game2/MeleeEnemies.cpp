@@ -81,21 +81,13 @@ sf::Vector2f MeleeEnemies::randomPosition(const sf::RenderWindow& window, sf::Re
 
 sf::Vector2f MeleeEnemies::enemyDirection(sf::RectangleShape player)
 {
+	sf::Vector2f direction, enemyPos, playerPos; 
 	float x, y;
-	if (this->shape.getPosition().x > player.getPosition().x)
-		x = -(this->shape.getPosition().x - player.getPosition().x);
-	else
-		x = player.getPosition().x - this->shape.getPosition().x;
-	if (this->shape.getPosition().y > player.getPosition().y)
-		y = -(this->shape.getPosition().y - player.getPosition().y);
-	else
-		y = player.getPosition().y - this->shape.getPosition().y;
-
-	while (sqrt(pow(x, 2) + pow(y, 2)) >= this->movSpeed)
-	{
-		x /= this->movSpeed;
-		y /= this->movSpeed;
-	}
+	playerPos = sf::Vector2f(player.getPosition().x + player.getGlobalBounds().width, player.getPosition().y + player.getGlobalBounds().width);
+	enemyPos = sf::Vector2f(this->shape.getPosition());
+	direction = playerPos - enemyPos;
+	x = direction.x / sqrt(pow(direction.x, 2) + pow(direction.y, 2));
+	y = direction.y / sqrt(pow(direction.x, 2) + pow(direction.y, 2));
 	return sf::Vector2f(x, y);
 }
 

@@ -84,7 +84,19 @@ void Player::updateInput()
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 	{
 		this->shape.move(0.f, this->movmentSpeed);
-	}
+	}/*
+	//shooting
+	float x = 0.f, y = 0.f;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+		y = -1.f;
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+		y = +1.f;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+		x = -1.f;
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+		x = +1.f;
+	if (x != 0 || y != 0)
+		this->shoot(sf::Vector2f(x, y));*/
 }
 
 void Player::updateWindowBoundsCollision(const sf::RenderTarget* target)
@@ -115,3 +127,4 @@ void Player::render(sf::RenderTarget* target)
 {
 	target->draw(this->shape);
 }
+

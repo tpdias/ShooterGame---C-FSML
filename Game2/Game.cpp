@@ -11,9 +11,12 @@ void Game::initVariables()
 	this->maxSwagBalls = 10;
 	*/
 	//Melee enemies
-	this->spawnTimerMaxME = 50.f;
+	this->spawnTimerMaxME = 30.f;
 	this->spawnTimerME = this->spawnTimerMaxME;
 	this->maxME = 10;
+	//Bullets
+	this->attackSpeedMax = 100.f;
+	this->attackSpeed = this->attackSpeedMax;
 
 	this->points = 0;
 }
@@ -88,7 +91,14 @@ void Game::pollEvents()
 			break;
 		}
 	}
+	if (mouse.isButtonPressed(mouse.Left))
+	{
+		this->shoot(player);
+	}
+	else
+		this->attackSpeed += 1.f;
 }
+
 
 void Game::spawnEnemies()
 {
@@ -119,7 +129,7 @@ void Game::spawnSwagBalls()
 		}
 	}
 }
-*/
+
 const int Game::randBallType() const
 {
 	int type = SwagBallTypes::DEFAULT;
@@ -132,7 +142,7 @@ const int Game::randBallType() const
 		type = SwagBallTypes::DEFAULT;
 	return type;
 }
-
+*/
 void Game::updatePlayer()
 {
 	this->player.update(this->window);
@@ -187,8 +197,18 @@ void Game::update()
 		this->spawnEnemies();
 		for (size_t i = 0; i < this->meleeEnemies.size(); i++)
 		{
-			if(meleeEnemies[i].isAlive())
+			if(meleeEnemies[i].isAlive())  // Pq fiz isso????
 				meleeEnemies[i].update(player.getShape());
+		}
+		for (size_t i = 0; i < this->bullets.size(); i++)
+		{
+			if(bullets[i].getShape().getPosition().x > this->window->getSize().x ||
+				bullets[i].getShape().getPosition().x < 0 ||
+				bullets[i].getShape().getPosition().y > this->window->getSize().y ||
+				bullets[i].getShape().getPosition().y < 0)
+				this->bullets.erase(this->bullets.begin() + i);
+			else
+				bullets[i].updateBullet();
 		}
 		this->updatePlayer();
 		this->updateCollision();
@@ -207,6 +227,10 @@ void Game::render()
 
 	//Render
 	this->player.render(this->window);
+	for (size_t i = 0; i < bullets.size(); i++)
+	{
+		bullets[i].renderBullet(this->window);
+	}
 	/*
 	for (auto i : this->swagBalls)
 	{
@@ -224,4 +248,14 @@ void Game::render()
 	this->window->display();
 }
 
-
+void Game::shoot(Player player)
+{
+	//Timer
+	if (this->attackSpeed < this->attackSpeedMax)
+		this->attackSpeed += 1.f;
+	else
+	{
+		this->bullets.push_back(Bullet(player, *this->window, this->mouse));
+		this->attackSpeed = 0.f;
+	}
+}

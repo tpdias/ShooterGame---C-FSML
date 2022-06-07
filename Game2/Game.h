@@ -8,12 +8,13 @@
 #include "Player.h"
 #include "SwagBall.h"
 #include "MeleeEnemies.h"
-
+#include "Bullet.h"
 class Game
 {
 private:
 	sf::VideoMode videoMode;
 	sf::RenderWindow* window;
+	sf::Mouse mouse;
 	bool endGame;
 	sf::Event sfmlEvent;
 
@@ -30,6 +31,11 @@ private:
 	//float spawnTimer;
 	//int maxSwagBalls;
 	
+	//Bullets 
+	float attackSpeedMax;
+	float attackSpeed;
+	std::vector<Bullet> bullets;
+
 	//Melee Enemies
 	float spawnTimerMaxME;
 	float spawnTimerME;	
@@ -58,11 +64,12 @@ public:
 	//Functions
 	const bool running() const;
 	void pollEvents();
-	
+
 	void spawnEnemies();
 	//void spawnSwagBalls();
-	const int randBallType() const;
+	//const int randBallType() const;
 	void updatePlayer();
+	
 	void updateCollision();
 	void updateGui();
 	void update();
@@ -70,5 +77,6 @@ public:
 	void renderGui(sf::RenderTarget* target);
 	void render();
 
+	void shoot(Player player);
 };
 
