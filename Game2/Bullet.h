@@ -16,12 +16,14 @@ public:
 	sf::CircleShape shape;
 	sf::Vector2f currVelocity;
 	float maxSpeed;
+	float radius;
 
 	//Constructor
-	Bullet(Player player, sf::RenderWindow& window, sf::Mouse mouse, float radius = 3.f)
-		: currVelocity(0.f, 0.f), maxSpeed(5.f)
+	Bullet(Player player, sf::RenderWindow& window, sf::Mouse mouse)
+		: currVelocity(0.f, 0.f), maxSpeed(5.f + player.getLvl()/3), radius(3.f + player.getLvl()/2)
 	{
-		this->shape.setPosition(player.getShape().getPosition());
+		this->shape.setPosition(player.getShape().getPosition().x + player.getShape().getGlobalBounds().width/2,
+								player.getShape().getPosition().y + player.getShape().getGlobalBounds().width/2);
 		this->currVelocity = this->getDirection(player, window, mouse) * this->maxSpeed;
 		this->shape.setRadius(radius);
 		this->shape.setFillColor(sf::Color::Magenta);

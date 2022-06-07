@@ -5,7 +5,7 @@ void Player::initVariables()
 	this->movmentSpeed = 5.f;
 	this->hpMax = 10;
 	this->hp = hpMax;
-	
+	this->level = 0;
 }
 
 void Player::initShape()
@@ -44,6 +44,16 @@ const int& Player::getHp() const
 const int& Player::getHpMax() const
 {
 	return this->hpMax;
+}
+const float Player::getLvl()
+{
+	return this->level;
+}
+void Player::levelUp()
+{
+	this->hpMax += 1;
+	this->movmentSpeed += 0.2f;
+	this->level++;
 }
 //Functions
 void Player::takeDamage(const int damage)

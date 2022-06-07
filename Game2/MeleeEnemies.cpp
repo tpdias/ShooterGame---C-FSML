@@ -1,20 +1,23 @@
 #include "MeleeEnemies.h"
-//Initializers
-void MeleeEnemies::initMeleeEnemy(const sf::RenderWindow& window, sf::RectangleShape player)
-{
-	this->stage = 0; //depois arrumar a parte do stage
 
-	this->shape.setRadius(10.f);
-	this->hp = 5;
-	this->movSpeed = 3.f;
+
+//Initializers
+void MeleeEnemies::initMeleeEnemy(const sf::RenderWindow& window, Player player)
+{
+	this->stage = player.getLvl();
+
+	this->shape.setRadius(10.f + player.getLvl());
+	this->hp = 5 + this->stage;
+	this->movSpeed = 3.f + this->stage/5;
 	this->shape.setFillColor(sf::Color::Red);
 	this->shape.setPosition(randomPosition(window, player));
 	this->spawned = true;
+	this->damage = 1 + this->stage/5;
 
 }
 
 //Constructors/Destructors
-MeleeEnemies::MeleeEnemies(const sf::RenderWindow& window, sf::RectangleShape player)
+MeleeEnemies::MeleeEnemies(const sf::RenderWindow& window, Player player)
 {
 	this->initMeleeEnemy(window, player);
 }
@@ -29,9 +32,25 @@ bool MeleeEnemies::isAlive()
 	return this->spawned;
 }
 
+int MeleeEnemies::getHp()
+{
+	return this->hp;
+}
+
+int MeleeEnemies::getDamage()
+{
+	return this->damage;
+}
+
 const sf::CircleShape MeleeEnemies::getShape() const
 {
 	return this->shape;
+}
+
+
+void MeleeEnemies::takeDamage()
+{
+	this->hp--;
 }
 
 void MeleeEnemies::explode()
@@ -66,12 +85,12 @@ void MeleeEnemies::collisionMove(sf::CircleShape secondEnemy)
 	}
 }
 
-sf::Vector2f MeleeEnemies::randomPosition(const sf::RenderWindow& window, sf::RectangleShape player)
+sf::Vector2f MeleeEnemies::randomPosition(const sf::RenderWindow& window, Player player)
 {
-	float x = player.getPosition().x, y = player.getPosition().y, i = 0.f;
-	while (x >= (player.getPosition().x - 200.f) && x <= (player.getPosition().x + 200.f)) 
+	float x = player.getShape().getPosition().x, y = player.getShape().getPosition().y, i = 0.f;
+	while (x >= (player.getShape().getPosition().x - 200.f) && x <= (player.getShape().getPosition().x + 200.f))
 		x = static_cast<float>(rand() % window.getSize().x - this->shape.getGlobalBounds().width);
-	while (y >= (player.getPosition().y - 200.f) && y <= (player.getPosition().y + 200.f))
+	while (y >= (player.getShape().getPosition().y - 200.f) && y <= (player.getShape().getPosition().y + 200.f))
 		y = static_cast<float>(rand() % window.getSize().y - this->shape.getGlobalBounds().height);
 	return sf::Vector2f(x, y);
 }
@@ -79,11 +98,11 @@ sf::Vector2f MeleeEnemies::randomPosition(const sf::RenderWindow& window, sf::Re
 
 //Functions
 
-sf::Vector2f MeleeEnemies::enemyDirection(sf::RectangleShape player)
+sf::Vector2f MeleeEnemies::enemyDirection(Player player)
 {
 	sf::Vector2f direction, enemyPos, playerPos; 
 	float x, y;
-	playerPos = sf::Vector2f(player.getPosition().x + player.getGlobalBounds().width, player.getPosition().y + player.getGlobalBounds().width);
+	playerPos = sf::Vector2f(player.getShape().getPosition().x + player.getShape().getGlobalBounds().width, player.getShape().getPosition().y + player.getShape().getGlobalBounds().width);
 	enemyPos = sf::Vector2f(this->shape.getPosition());
 	direction = playerPos - enemyPos;
 	x = direction.x / sqrt(pow(direction.x, 2) + pow(direction.y, 2));
@@ -91,7 +110,7 @@ sf::Vector2f MeleeEnemies::enemyDirection(sf::RectangleShape player)
 	return sf::Vector2f(x, y);
 }
 
-void MeleeEnemies::update(sf::RectangleShape player)
+void MeleeEnemies::update(Player player)
 {
 	this->shape.move(enemyDirection(player));
 }

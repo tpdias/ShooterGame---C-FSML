@@ -45,6 +45,8 @@ private:
 	//Ranged Enemies
 
 	//Summoner Enemies
+
+	//Initiators
 	void initVariables();
 	void initWindow();
 	void initFonts();
@@ -69,6 +71,9 @@ public:
 	//void spawnSwagBalls();
 	//const int randBallType() const;
 	void updatePlayer();
+	
+	//Game dificulty and playerXp
+	void updateLevel();
 	
 	void updateCollision();
 	void updateGui();

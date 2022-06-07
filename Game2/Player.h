@@ -15,7 +15,7 @@ private:
 	float movmentSpeed;
 	int hp;
 	int hpMax;
-	
+	int level;
 
 	void initVariables();
 	void initShape();
@@ -28,9 +28,11 @@ public:
 	const sf::RectangleShape& getShape() const;
 	const int& getHp() const;
 	const int& getHpMax() const;
+	const float getLvl();
 
 
 	//Functions
+	void levelUp();
 	void takeDamage(const int damage);
 	void gainHealth(const int health);
 

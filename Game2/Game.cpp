@@ -15,7 +15,7 @@ void Game::initVariables()
 	this->spawnTimerME = this->spawnTimerMaxME;
 	this->maxME = 10;
 	//Bullets
-	this->attackSpeedMax = 100.f;
+	this->attackSpeedMax = 10.f;
 	this->attackSpeed = this->attackSpeedMax;
 
 	this->points = 0;
@@ -109,40 +109,12 @@ void Game::spawnEnemies()
 	{
 		if (this->meleeEnemies.size() < this->maxME)
 		{
-			this->meleeEnemies.push_back(MeleeEnemies(*this->window, this->player.getShape()));
+			this->meleeEnemies.push_back(MeleeEnemies(*this->window, this->player));
 			this->spawnTimerME = 0.f;
 		}
 	}
 }
-/*
-void Game::spawnSwagBalls()
-{
-	//Timer
-	if (this->spawnTimer < this->spawnTimerMax)
-		this->spawnTimer += 1.f;
-	else
-	{
-		if (this->swagBalls.size() < this->maxSwagBalls)
-		{
-			this->swagBalls.push_back(SwagBall(*this->window, this->randBallType()));
-			this->spawnTimer = 0.f;
-		}
-	}
-}
 
-const int Game::randBallType() const
-{
-	int type = SwagBallTypes::DEFAULT;
-	int randValue = rand() % 100 + 1;
-	if (randValue > 60 && randValue < 80)
-		type = SwagBallTypes::DAMAGING;
-	else if (randValue > 80 && randValue <= 100)
-		type = SwagBallTypes::HEALING;
-	else
-		type = SwagBallTypes::DEFAULT;
-	return type;
-}
-*/
 void Game::updatePlayer()
 {
 	this->player.update(this->window);
@@ -151,20 +123,32 @@ void Game::updatePlayer()
 		this->endGame = true;
 }
 
+
+void Game::updateLevel()
+{
+	this->player.gainHealth(this->player.getHpMax());
+	this->player.levelUp();	
+}
+
 void Game::updateCollision()
 {
 	//Check the collision with the player
-	for (size_t i = 0; i < this->meleeEnemies.size(); i ++)
+	for (size_t i = 0; i < this->meleeEnemies.size(); i++)
 	{
 		if (this->player.getShape().getGlobalBounds().intersects(this->meleeEnemies[i].getShape().getGlobalBounds()))
 		{
-			this->player.takeDamage(1);
-	
+			this->player.takeDamage(this->meleeEnemies[i].getDamage());
+
 			//Remove the ball
 			this->meleeEnemies[i].explode();
 			this->meleeEnemies.erase(this->meleeEnemies.begin() + i);
 		}
-		//Check the collision with the Enemies
+	}
+
+	//Check the collision Enemies with the Enemies
+	for (size_t i = 0; i < this->meleeEnemies.size(); i++)
+	{
+		//Check the collision Enemies with the Enemies
 		for (int j = 0; j < this->meleeEnemies.size(); j++)
 		{
 			if ((this->meleeEnemies[i].getShape().getGlobalBounds().intersects(this->meleeEnemies[j].getShape().getGlobalBounds())) && (i != j))
@@ -173,7 +157,33 @@ void Game::updateCollision()
 			}
 		}
 	}
-	
+
+	//Check the collision bullets with the enemies
+	for (size_t i = 0; i < this->meleeEnemies.size(); i++)
+	{
+		for (size_t j = 0; j < this->bullets.size(); j++)
+		{
+			if (this->bullets[j].getShape().getGlobalBounds().intersects(this->meleeEnemies[i].getShape().getGlobalBounds()))
+			{
+				//Collision = enemie loses hp and player gets points
+				this->meleeEnemies[i].takeDamage();
+				if (this->meleeEnemies[i].getHp() <= 0)
+				{
+					//Remove the enemie
+					this->meleeEnemies[i].explode();
+					this->meleeEnemies.erase(this->meleeEnemies.begin() + i);
+					
+					//Remove the bullet
+					this->bullets.erase(this->bullets.begin() + j);
+					
+					//Give player points
+					points++;
+					if (this->points % 2 == 0)
+						this->updateLevel();
+				}
+			}
+		}
+	}	
 }
 
 void Game::updateGui()
@@ -192,17 +202,16 @@ void Game::update()
 
 	if (this->endGame == false)
 	{
-		
-		//this->spawnSwagBalls();
 		this->spawnEnemies();
+		//Colocar esses fors dentro das funções de updates, n faz sentido ficar aqui
 		for (size_t i = 0; i < this->meleeEnemies.size(); i++)
 		{
 			if(meleeEnemies[i].isAlive())  // Pq fiz isso????
-				meleeEnemies[i].update(player.getShape());
+				meleeEnemies[i].update(player);
 		}
 		for (size_t i = 0; i < this->bullets.size(); i++)
 		{
-			if(bullets[i].getShape().getPosition().x > this->window->getSize().x ||
+			if (bullets[i].getShape().getPosition().x > this->window->getSize().x ||
 				bullets[i].getShape().getPosition().x < 0 ||
 				bullets[i].getShape().getPosition().y > this->window->getSize().y ||
 				bullets[i].getShape().getPosition().y < 0)
