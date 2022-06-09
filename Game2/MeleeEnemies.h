@@ -10,20 +10,17 @@ class MeleeEnemies : public Enemy
 {
 private:
 	sf::CircleShape shape;
-	int stage;
 	int hp;
 	float movSpeed;
-	bool spawned;
 	int damage;
 
-	void initMeleeEnemy(const sf::RenderWindow& window, Player player);
+	void initMeleeEnemy(const sf::RenderWindow& window, Player player, int stage);
 
 public:
 	//Constructors
-	MeleeEnemies(const sf::RenderWindow& window, Player player);
+	MeleeEnemies(const sf::RenderWindow& window, Player player, int stage);
 	virtual ~MeleeEnemies();
 	//Accessors
-	bool isAlive();
 	int getHp();
 	int getDamage();
 	const sf::CircleShape getShape() const;

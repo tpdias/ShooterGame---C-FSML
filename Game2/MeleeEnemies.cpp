@@ -2,24 +2,20 @@
 
 
 //Initializers
-void MeleeEnemies::initMeleeEnemy(const sf::RenderWindow& window, Player player)
+void MeleeEnemies::initMeleeEnemy(const sf::RenderWindow& window, Player player, int stage)
 {
-	this->stage = player.getLvl();
-
-	this->shape.setRadius(10.f + player.getLvl());
-	this->hp = 5 + this->stage;
-	this->movSpeed = 3.f + this->stage/5;
+	this->shape.setRadius(10.f + stage);
+	this->hp = 5 + stage;
+	this->movSpeed = 3.f + stage/5;
 	this->shape.setFillColor(sf::Color::Red);
 	this->shape.setPosition(randomPosition(window, player));
-	this->spawned = true;
-	this->damage = 1 + this->stage/5;
-
+	this->damage = 1 + stage/5;
 }
 
 //Constructors/Destructors
-MeleeEnemies::MeleeEnemies(const sf::RenderWindow& window, Player player)
+MeleeEnemies::MeleeEnemies(const sf::RenderWindow& window, Player player, int stage)
 {
-	this->initMeleeEnemy(window, player);
+	this->initMeleeEnemy(window, player, stage);
 }
 
 MeleeEnemies::~MeleeEnemies()
@@ -27,10 +23,6 @@ MeleeEnemies::~MeleeEnemies()
 
 }
 
-bool MeleeEnemies::isAlive()
-{
-	return this->spawned;
-}
 
 int MeleeEnemies::getHp()
 {

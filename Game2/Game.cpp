@@ -4,12 +4,6 @@ void Game::initVariables()
 {
 	this->endGame = false;
 
-	//Swag balls
-	/*
-	this->spawnTimerMax = 10.f;
-	this->spawnTimer = this->spawnTimerMax;
-	this->maxSwagBalls = 10;
-	*/
 	//Melee enemies
 	this->spawnTimerMaxME = 30.f;
 	this->spawnTimerME = this->spawnTimerMaxME;
@@ -19,6 +13,9 @@ void Game::initVariables()
 	this->attackSpeed = this->attackSpeedMax;
 
 	this->points = 0;
+
+	//Setando o timer de aumento de nível // 1 min
+	this->nextLevel = 60000;
 }
 
 void Game::initWindow()
@@ -99,6 +96,11 @@ void Game::pollEvents()
 		this->attackSpeed += 1.f;
 }
 
+void Game::setTimerStart(int timeInSeconds)
+{
+	this->start = timeInSeconds;
+}
+
 
 void Game::spawnEnemies()
 {
@@ -109,7 +111,7 @@ void Game::spawnEnemies()
 	{
 		if (this->meleeEnemies.size() < this->maxME)
 		{
-			this->meleeEnemies.push_back(MeleeEnemies(*this->window, this->player));
+			this->meleeEnemies.push_back(MeleeEnemies(*this->window, this->player, this->stage));
 			this->spawnTimerME = 0.f;
 		}
 	}
@@ -191,13 +193,20 @@ void Game::updateGui()
 	std::stringstream ss;
 
 	ss << "- Points: " << this->points << "\n"
-		<< "- Health: " << this->player.getHp() << "/" << this->player.getHpMax() << "\n";
+		<< "- Health: " << this->player.getHp() << "/" << this->player.getHpMax() << "\n"
+		<< "- Time: " << static_cast<int>((clock() - this->start)/1000) << " s\n";
 
 	this->guiText.setString(ss.str());
 }
 
 void Game::update()
 {
+	//Timer
+	if (clock() - this->start > nextLevel) {
+		stage++;
+		maxME *= 2;
+	}
+
 	this->pollEvents();
 
 	if (this->endGame == false)
@@ -205,10 +214,8 @@ void Game::update()
 		this->spawnEnemies();
 		//Colocar esses fors dentro das funções de updates, n faz sentido ficar aqui
 		for (size_t i = 0; i < this->meleeEnemies.size(); i++)
-		{
-			if(meleeEnemies[i].isAlive())  // Pq fiz isso????
-				meleeEnemies[i].update(player);
-		}
+			meleeEnemies[i].update(player);
+
 		for (size_t i = 0; i < this->bullets.size(); i++)
 		{
 			if (bullets[i].getShape().getPosition().x > this->window->getSize().x ||

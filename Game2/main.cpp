@@ -8,6 +8,7 @@ int main()
     //Initialize game object
     Game game;
 
+    game.setTimerStart(clock());
     //Game loop
     while (game.running())
     {

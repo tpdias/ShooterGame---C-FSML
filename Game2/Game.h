@@ -4,11 +4,13 @@
 #include <ctime>
 #include <vector>
 #include <sstream>
+#include <ctime>
 
 #include "Player.h"
 #include "SwagBall.h"
 #include "MeleeEnemies.h"
 #include "Bullet.h"
+
 class Game
 {
 private:
@@ -22,15 +24,15 @@ private:
 
 	int points;
 
+	//Timer
+	clock_t start;
+	int nextLevel;
+	int stage;
+
 	sf::Font font;
 	sf::Text guiText;
 	sf::Text endGameText;
-	
-	//std::vector<SwagBall> swagBalls;
-	//float spawnTimerMax;
-	//float spawnTimer;
-	//int maxSwagBalls;
-	
+
 	//Bullets 
 	float attackSpeedMax;
 	float attackSpeed;
@@ -58,6 +60,7 @@ public:
 	Game();
 	~Game();
 
+	
 	//Accessors
 	const bool& getEndGame() const;
 
@@ -66,6 +69,9 @@ public:
 	//Functions
 	const bool running() const;
 	void pollEvents();
+
+	//Setters
+	void setTimerStart(int timeInSeconds);
 
 	void spawnEnemies();
 	//void spawnSwagBalls();
