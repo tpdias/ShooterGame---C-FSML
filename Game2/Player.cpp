@@ -3,7 +3,7 @@
 void Player::initVariables()
 {
 	this->movmentSpeed = 5.f;
-	this->hpMax = 10;
+	this->hpMax = 3;
 	this->hp = hpMax;
 	this->level = 0;
 }
@@ -51,8 +51,8 @@ const float Player::getLvl()
 }
 void Player::levelUp()
 {
-	this->hpMax += 1;
-	this->movmentSpeed += 0.2f;
+	//this->hpMax += 1;
+	//this->movmentSpeed += 0.2f;
 	this->level++;
 }
 //Functions

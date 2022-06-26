@@ -22,17 +22,24 @@ private:
 	sf::Event sfmlEvent;
 
 	Player player;
+	bool levelUp;
 
 	int points;
 
 	//Timer
 	clock_t start;
-	int nextLevel;
+	int xp4NextLevel;
 	int stage;
 
+	//Fonts
 	sf::Font font;
 	sf::Text guiText;
 	sf::Text endGameText;
+
+	//Level Up
+	sf::Text upgrade1;
+	sf::Text upgrade2;
+	sf::Text upgrade3;
 
 	//Bullets 
 	float attackSpeedMax;
@@ -57,7 +64,7 @@ private:
 	void initWindow();
 	void initFonts();
 	void initText();
-
+	void initLvlText();
 
 public:
 	//Constructors and Destructors
@@ -78,6 +85,7 @@ public:
 	void enemyCollision();
 	void bulletCollision();
 	void xpCollision();
+	
 
 	//Setters
 	void setTimerStart(int timeInSeconds);
@@ -88,11 +96,13 @@ public:
 	
 	//Game dificulty and playerXp
 	void updateLevel();
-	
+	void updateLvlGui();
+	void hideLvlGui();
 	void updateCollision();
 	void updateGui();
 	void update();
 
+	void renderLvlGui(sf::RenderTarget* target);
 	void renderGui(sf::RenderTarget* target);
 	void render();
 

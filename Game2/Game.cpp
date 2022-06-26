@@ -12,10 +12,12 @@ void Game::initVariables()
 	this->attackSpeedMax = 10.f;
 	this->attackSpeed = this->attackSpeedMax;
 
+	this->levelUp = false;
+
 	this->points = 0;
 
 	//Setando o timer de aumento de nível 1 min
-	this->nextLevel = 60000;
+	this->xp4NextLevel = 60000;
 }
 
 void Game::initWindow()
@@ -47,6 +49,28 @@ void Game::initText()
 	this->endGameText.setString("YOU ARE DEAD, EXIT THE GAME!");
 }
 
+void Game::initLvlText()
+{
+	//Gui text lvl up init
+	this->upgrade1.setFont(this->font);
+	this->upgrade1.setFillColor(sf::Color::Blue);
+	this->upgrade1.setCharacterSize(16);
+	this->upgrade1.setPosition(sf::Vector2f(this->window->getSize().x / 3, this->window->getSize().y/4));
+	this->upgrade1.setString("aaa");
+
+	this->upgrade2.setFont(this->font);
+	this->upgrade2.setFillColor(sf::Color::Cyan);
+	this->upgrade2.setPosition(sf::Vector2f(this->window->getSize().x / 3, 2 * this->window->getSize().y / 4));
+	this->upgrade2.setCharacterSize(16);
+	this->upgrade2.setString("bbb");
+
+	this->upgrade3.setFont(this->font);
+	this->upgrade3.setFillColor(sf::Color::Green);
+	this->upgrade3.setPosition(sf::Vector2f(this->window->getSize().x / 3, 3 * this->window->getSize().y / 4));
+	this->upgrade3.setCharacterSize(16);
+	this->upgrade3.setString("ccc");
+}
+
 //Constructors and Destructors
 Game::Game()
 {
@@ -54,6 +78,7 @@ Game::Game()
 	this->initWindow();
 	this->initFonts();
 	this->initText();
+	this->initLvlText();
 }
 
 Game::~Game()
@@ -119,7 +144,10 @@ void Game::spawnEnemies()
 
 void Game::spawnXp(int index)
 {
-	this->experience.push_back(Experience(*this->window, this->stage, this->meleeEnemies[index].getShape().getPosition()));
+	int posX = this->meleeEnemies[index].getShape().getPosition().x + this->meleeEnemies[index].getShape().getRadius();
+	int posY = this->meleeEnemies[index].getShape().getPosition().y + this->meleeEnemies[index].getShape().getRadius();
+	sf::Vector2f position(posX, posY);
+	this->experience.push_back(Experience(*this->window, this->stage, position));
 }
 
 void Game::updatePlayer()
@@ -133,8 +161,8 @@ void Game::updatePlayer()
 
 void Game::updateLevel()
 {
-	this->player.gainHealth(this->player.getHpMax());
-	this->player.levelUp();	
+	//this->player.gainHealth(this->player.getHpMax());
+	//this->player.levelUp();	
 }
 
 void Game::updateCollision()
@@ -156,7 +184,8 @@ void Game::xpCollision()
 		{
 			this->points++;
 			if (this->points % 2 == 0)
-				this->updateLevel();
+				//this->updateLevel();  --- change later
+				this->levelUp = true;
 			this->experience.erase(this->experience.begin() + i);
 		}
 	}
@@ -232,10 +261,21 @@ void Game::updateGui()
 	this->guiText.setString(ss.str());
 }
 
+void Game::updateLvlGui()
+{
+	std::stringstream ss;
+
+	ss << "Increase X in Y% \n";
+
+	this->upgrade1.setString(ss.str());
+	this->upgrade2.setString(ss.str());
+	this->upgrade3.setString(ss.str());
+}
+
 void Game::update()
 {
-	//Timer
-	if (clock() - this->start > nextLevel) {
+	//Timer - increases stage after 60s
+	if (clock() - this->start > xp4NextLevel) {
 		stage++;
 		maxME *= 2;
 	}
@@ -244,25 +284,55 @@ void Game::update()
 
 	if (this->endGame == false)
 	{
-		this->spawnEnemies();
-		//Colocar esses fors dentro das funções de updates, n faz sentido ficar aqui
-		for (size_t i = 0; i < this->meleeEnemies.size(); i++)
-			meleeEnemies[i].update(player);
-
-		for (size_t i = 0; i < this->bullets.size(); i++)
-		{
-			if (bullets[i].getShape().getPosition().x > this->window->getSize().x ||
-				bullets[i].getShape().getPosition().x < 0 ||
-				bullets[i].getShape().getPosition().y > this->window->getSize().y ||
-				bullets[i].getShape().getPosition().y < 0)
-				this->bullets.erase(this->bullets.begin() + i);
-			else
-				bullets[i].updateBullet();
+		if (this->levelUp)
+		{	
+			//Precisa parar o timer depois
+			this->updateLvlGui();
+			//Enqnto não escolhe 
+			if (mouse.isButtonPressed(mouse.Left))
+			{
+				this->hideLvlGui();
+				this->levelUp = false;
+				this->renderLvlGui(this->window);
+			}
 		}
-		this->updatePlayer();
-		this->updateCollision();
-		this->updateGui();
+		else
+		{
+			this->spawnEnemies();//acho que isso pode mudar !! checar se spawna antes de entrar na funcao?
+			//Colocar esses fors dentro das funções de updates, n faz sentido ficar aqui
+			for (size_t i = 0; i < this->meleeEnemies.size(); i++)
+				meleeEnemies[i].update(player);
+
+			for (size_t i = 0; i < this->bullets.size(); i++)
+			{
+				if (bullets[i].getShape().getPosition().x > this->window->getSize().x ||
+					bullets[i].getShape().getPosition().x < 0 ||
+					bullets[i].getShape().getPosition().y > this->window->getSize().y ||
+					bullets[i].getShape().getPosition().y < 0)
+					this->bullets.erase(this->bullets.begin() + i);
+				else
+					bullets[i].updateBullet();
+			}
+			this->updatePlayer();
+			this->updateCollision();
+			this->updateGui();
+		}
 	}
+}
+
+
+void Game::hideLvlGui()
+{
+	this->upgrade1.setString("");
+	this->upgrade2.setString("");
+	this->upgrade3.setString("");
+}
+
+void Game::renderLvlGui(sf::RenderTarget* target)
+{
+	target->draw(this->upgrade1);
+	target->draw(this->upgrade2);
+	target->draw(this->upgrade3);
 }
 
 void Game::renderGui(sf::RenderTarget* target)
@@ -273,7 +343,6 @@ void Game::renderGui(sf::RenderTarget* target)
 void Game::render()
 {
 	this->window->clear();
-
 	//Render
 	this->player.render(this->window);
 	for (size_t i = 0; i < bullets.size(); i++)
@@ -290,10 +359,17 @@ void Game::render()
 	}
 	//Render gui
 	this->renderGui(this->window);
+	//Render lvl up
+	if(this->levelUp)
+		this->renderLvlGui(this->window);
 	//Render end text
 	if (this->endGame)
 		this->window->draw(this->endGameText);
+	
 	this->window->display();
+	
+
+	
 }
 
 void Game::shoot(Player player)
