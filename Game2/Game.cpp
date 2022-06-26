@@ -14,7 +14,7 @@ void Game::initVariables()
 
 	this->points = 0;
 
-	//Setando o timer de aumento de nível // 1 min
+	//Setando o timer de aumento de nível 1 min
 	this->nextLevel = 60000;
 }
 
@@ -117,6 +117,11 @@ void Game::spawnEnemies()
 	}
 }
 
+void Game::spawnXp(int index)
+{
+	this->experience.push_back(Experience(*this->window, this->stage, this->meleeEnemies[index].getShape().getPosition()));
+}
+
 void Game::updatePlayer()
 {
 	this->player.update(this->window);
@@ -134,6 +139,31 @@ void Game::updateLevel()
 
 void Game::updateCollision()
 {
+	playerCollision();
+	
+	enemyCollision();
+	
+	bulletCollision();
+	
+	xpCollision();
+}
+
+void Game::xpCollision()
+{
+	for (size_t i = 0; i < this->experience.size(); i++)
+	{
+		if (this->player.getShape().getGlobalBounds().intersects(this->experience[i].getShape().getGlobalBounds()))
+		{
+			this->points++;
+			if (this->points % 2 == 0)
+				this->updateLevel();
+			this->experience.erase(this->experience.begin() + i);
+		}
+	}
+}
+
+void Game::playerCollision() 
+{
 	//Check the collision with the player
 	for (size_t i = 0; i < this->meleeEnemies.size(); i++)
 	{
@@ -146,7 +176,10 @@ void Game::updateCollision()
 			this->meleeEnemies.erase(this->meleeEnemies.begin() + i);
 		}
 	}
+}
 
+void Game::enemyCollision()
+{
 	//Check the collision Enemies with the Enemies
 	for (size_t i = 0; i < this->meleeEnemies.size(); i++)
 	{
@@ -159,7 +192,10 @@ void Game::updateCollision()
 			}
 		}
 	}
+}
 
+void Game::bulletCollision()
+{
 	//Check the collision bullets with the enemies
 	for (size_t i = 0; i < this->meleeEnemies.size(); i++)
 	{
@@ -171,23 +207,20 @@ void Game::updateCollision()
 				this->meleeEnemies[i].takeDamage();
 				if (this->meleeEnemies[i].getHp() <= 0)
 				{
+					//Drops XP and gives points
+					this->spawnXp(i);
+
 					//Remove the enemie
 					this->meleeEnemies[i].explode();
 					this->meleeEnemies.erase(this->meleeEnemies.begin() + i);
-					
+
 					//Remove the bullet
 					this->bullets.erase(this->bullets.begin() + j);
-					
-					//Give player points
-					points++;
-					if (this->points % 2 == 0)
-						this->updateLevel();
 				}
 			}
 		}
-	}	
+	}
 }
-
 void Game::updateGui()
 {
 	std::stringstream ss;
@@ -247,11 +280,10 @@ void Game::render()
 	{
 		bullets[i].renderBullet(this->window);
 	}
-	/*
-	for (auto i : this->swagBalls)
+	for (auto i : this->experience)
 	{
 		i.render(*this->window);
-	}*/
+	}
 	for (auto i : this->meleeEnemies)
 	{
 		i.render(*this->window);

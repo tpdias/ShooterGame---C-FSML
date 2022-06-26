@@ -10,6 +10,7 @@
 #include "SwagBall.h"
 #include "MeleeEnemies.h"
 #include "Bullet.h"
+#include "Experience.h"
 
 class Game
 {
@@ -37,6 +38,9 @@ private:
 	float attackSpeedMax;
 	float attackSpeed;
 	std::vector<Bullet> bullets;
+
+	//Experience
+	std::vector<Experience> experience;
 
 	//Melee Enemies
 	float spawnTimerMaxME;
@@ -69,13 +73,17 @@ public:
 	//Functions
 	const bool running() const;
 	void pollEvents();
+	void shoot(Player player);
+	void playerCollision();
+	void enemyCollision();
+	void bulletCollision();
+	void xpCollision();
 
 	//Setters
 	void setTimerStart(int timeInSeconds);
 
 	void spawnEnemies();
-	//void spawnSwagBalls();
-	//const int randBallType() const;
+	void spawnXp(int index);
 	void updatePlayer();
 	
 	//Game dificulty and playerXp
@@ -88,6 +96,6 @@ public:
 	void renderGui(sf::RenderTarget* target);
 	void render();
 
-	void shoot(Player player);
+	
 };
 

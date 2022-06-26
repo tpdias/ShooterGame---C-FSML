@@ -20,7 +20,7 @@ public:
 
 	//Constructor
 	Bullet(Player player, sf::RenderWindow& window, sf::Mouse mouse)
-		: currVelocity(0.f, 0.f), maxSpeed(5.f + player.getLvl()/3), radius(3.f + player.getLvl()/2)
+		: currVelocity(0.f, 0.f), maxSpeed(5.f), radius(3.f)
 	{
 		this->shape.setPosition(player.getShape().getPosition().x + player.getShape().getGlobalBounds().width/2,
 								player.getShape().getPosition().y + player.getShape().getGlobalBounds().width/2);
